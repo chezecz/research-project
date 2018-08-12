@@ -13,6 +13,7 @@ __Using cloud speech recognition in low bandwidth environments__
 ``` FLASK_ENV=development```
 
 ``` FLASK_APP=server```
+
 4. Launch Flask server
 
 ``` flask run```
