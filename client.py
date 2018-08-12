@@ -1,5 +1,4 @@
 import base64
-import sys
 import json
 import os
 import io
@@ -18,11 +17,9 @@ jsonQuery = ({
                 'config': 
                     {
                         'encoding':'LINEAR16',
-                        'sampleRateHertz':'16000',
+                        'sampleRateHertz':'44100',
                         'languageCode':'en-US'
-                    }
-                }, 
-            {
+                    }, 
                 'audio':
                     {
                     'content':content.decode("utf-8")
@@ -31,5 +28,7 @@ jsonQuery = ({
 
 s = json.dumps(jsonQuery)
 
-res = requests.post('http://127.0.0.1:5000/request/', json=s)
-print(res)
+res = requests.post('http://127.0.0.1:5000/request/', json=s).json()
+for result in res['results']:
+    for alternative in result:
+        print(result[alternative][0]['transcript'])
