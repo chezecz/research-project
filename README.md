@@ -5,9 +5,11 @@ __Using cloud speech recognition in low bandwidth environments__
 1. Clone project
 
 ```git clone https://github.com/chezecz/research-project.git```
+
 2. Install dependencies
 
 ``` pip install -r requirements.txt```
+
 3. Set enviroment variables
 
 ``` FLASK_ENV=development```
