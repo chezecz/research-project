@@ -13,7 +13,7 @@ with io.open(file_name, 'rb') as audio:
     audio_content = audio.read()
     content = base64.b64encode(audio_content)
 
-jsonQuery = ({
+json_query = ({
                 'config': 
                     {
                         'encoding':'LINEAR16',
@@ -26,7 +26,7 @@ jsonQuery = ({
                     }
             })
 
-s = json.dumps(jsonQuery)
+s = json.dumps(json_query)
 
 res = requests.post('http://127.0.0.1:5000/request/', json=s).json()
 for result in res['results']:
