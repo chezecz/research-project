@@ -2,4 +2,5 @@
 .DS_Store
 .mp3
 .txt
-
+apikey.py
+/__pycache__
