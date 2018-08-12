@@ -11,11 +11,12 @@ app = Flask(__name__)
 def hello():
     return "Hello World!"
 
-@app.route("/request", methods = ['POST'])
+@app.route("/request/", methods = ['POST'])
 def getRequest():
-	jsondata = request.get_json(force = True)
+	jsondata = request.get_json()
 	data = json.loads(jsondata)
-	return data
+	print(data)
+	return jsonify(data)
 
 if __name__ == '__main__':
     app.env = "development"
