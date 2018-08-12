@@ -1,6 +1,3 @@
-# Google API Key
-# export GOOGLE_APPLICATION_CREDENTIALS="/Users/cheze/python-XXXXXXXXXX.json"
-
 import base64
 import sys
 import json
@@ -15,8 +12,14 @@ file_name = os.path.join(
 
 with io.open(file_name, 'rb') as audio:
     audio_content = audio.read()
-    print(base64.b64encode(audio_content))
-    # return base64.b64encode(audio_content)
+    content = base64.b64encode(audio_content)
+
+jsonQuery = {'config': {'encoding':'mp3','sampleRateHertz':'16000','languageCode':'en-US'}}, {'audio':{'content':'test'}}
+s = json.dumps(jsonQuery)
+print(s)
+
+res = requests.post('http://127.0.0.1:5000/request/', json=s).json()
+print(res)
 
 # def encode_audio(audio):
 #     audio_content = audio.read()

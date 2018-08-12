@@ -1,3 +1,6 @@
+# Google API Key
+# export GOOGLE_APPLICATION_CREDENTIALS="/Users/cheze/python-XXXXXXXXXX.json"
+
 import io
 import os
 
