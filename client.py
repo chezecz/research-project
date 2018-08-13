@@ -3,11 +3,12 @@ import json
 import os
 import io
 import requests
+import sys
 
 file_name = os.path.join(
     os.path.dirname(__file__),
     'resources',
-    'audio.wav')
+    sys.argv[1])
 
 with io.open(file_name, 'rb') as audio:
     audio_content = audio.read()
