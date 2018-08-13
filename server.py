@@ -1,5 +1,6 @@
 import json
 import requests
+import time
 from flask import jsonify
 from flask import request
 
@@ -11,7 +12,10 @@ base_URL = "https://speech.googleapis.com"
 request_URL = f"{base_URL}/v1/speech:recognize?key={api_key}"
 
 def get_transcription(data):
+	# start_time = time.time()
 	return jsonify(requests.post(request_URL, json = data).json())
+	# elapsed_time = time.time() - start_time
+	# print(elapsed_time)
 
 app = Flask(__name__)
 
