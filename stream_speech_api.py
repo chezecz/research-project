@@ -24,7 +24,7 @@ config = speech.types.StreamingRecognitionConfig(config=config)
 requests = [speech.types.StreamingRecognizeRequest(audio_content=content,)]
 
 responses = client.streaming_recognize(config, requests)
-print(responses)
+print(dir(responses))
 for response in responses:
 	for result in response:
 		for alternative in result.alternative:
