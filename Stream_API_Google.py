@@ -1,5 +1,5 @@
 import io
-import base64
+import json
 from google.cloud import speech
 
 client = speech.SpeechClient()
@@ -19,4 +19,6 @@ config = speech.types.StreamingRecognitionConfig(config=config)
 results = client.streaming_recognize(config, requests)
 
 for result in results:
-    print(result)
+    for data in result.results:
+        for parts in data.alternatives:
+            print(parts)
