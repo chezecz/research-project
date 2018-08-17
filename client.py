@@ -4,9 +4,9 @@ import os
 import io
 import requests
 import sys
-# import time
+import time
 
-# start_time = time.time()
+start_time = time.time()
 
 file_name = os.path.join(
     os.path.dirname(__file__),
@@ -37,5 +37,5 @@ for result in res['results']:
     for alternative in result:
         print(result[alternative][0]['transcript'])
 
-# elapsed_time = time.time() - start_time
-# print(elapsed_time)
+elapsed_time = time.time() - start_time
+print(elapsed_time)

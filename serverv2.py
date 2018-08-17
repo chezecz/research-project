@@ -20,7 +20,7 @@ def get_transcription(data):
                     }, 
                 'audio':
                     {
-                    'content':data
+                    'content':data.decode('utf-8')
                     }
             })
 
@@ -34,7 +34,7 @@ def hello():
 
 @app.route("/request/", methods = ['POST'])
 def get_request():
-	return (get_transcription(json.loads(request.get_json())))
+    return get_transcription(request.data)
 
 if __name__ == '__main__':
     app.env = "development"
