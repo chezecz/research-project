@@ -14,7 +14,7 @@ with io.open('./resources/audio.wav', 'rb') as audio:
 
 requests = [speech.types.StreamingRecognizeRequest(audio_content=audio_content)]
 
-config = speech.types.StreamingRecognitionConfig(config=config)
+config = speech.types.StreamingRecognitionConfig(config=config, interim_results = True)
 
 results = client.streaming_recognize(config, requests)
 
