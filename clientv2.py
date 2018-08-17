@@ -15,10 +15,10 @@ file_name = os.path.join(
 
 with io.open(file_name, 'rb') as audio:
     audio_content = audio.read()
-    content = base64.b64encode(audio_content)
+    # content = base64.b64encode(audio_content)
 
-res = requests.post('http://127.0.0.1:5000/request/', data=content).json()
-print(res)
+res = requests.post('http://127.0.0.1:5000/request/', data=audio_content)
+print(res.text)
 
 elapsed_time = time.time() - start_time
 print(elapsed_time)
