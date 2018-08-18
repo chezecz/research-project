@@ -16,6 +16,10 @@ __Using cloud speech recognition in low bandwidth environments__
 
 ``` FLASK_APP=server```
 
+__(Optional)__ Google Cloud API key
+
+```export GOOGLE_APPLICATION_CREDENTIALS=$PATH_TO_FILE/api_key.json```
+
 4. Launch Flask server
 
 ``` flask run```
@@ -23,7 +27,10 @@ __Using cloud speech recognition in low bandwidth environments__
 **By Default:** Server is located on http://127.0.0.1:5000/ or http://localhost:5000/
 
 5. __(Optional)__ Upload necessary files into *resources* folder
-6. Update your ```apiKey.py``` with your Google Cloud API Key
+6. Set your Google Cloud API Key
+
+```export GOOGLE_APPLICATION_CREDENTIALS=$PATH_TO_FILE/api_key.json```
+
 7. Run Client application
 
-``` python3 client.py```
+``` python3 client.py [filename]```
