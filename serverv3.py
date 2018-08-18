@@ -1,7 +1,14 @@
+# Google API Key
+# export GOOGLE_APPLICATION_CREDENTIALS=/Users/cheze/python-XXXXXXXXXXXX.json
+
 import io
 from flask import request
 from google.cloud import speech
 from flask import Flask
+from flask import Response
+from flask import copy_current_request_context
+
+delimeter = '=' * 20
 
 def get_transcription(content):
     client = speech.SpeechClient()
@@ -20,7 +27,7 @@ def get_transcription(content):
     for result in results:
         for data in result.results:
             for parts in data.alternatives:
-                return parts.transcript
+                yield f"{delimeter}\n {parts.transcript}\n"
 
 
 app = Flask(__name__)
@@ -31,7 +38,7 @@ def hello():
 
 @app.route("/request/", methods = ['POST'])
 def get_request():
-    return get_transcription(request.data)
+    return Response(get_transcription(request.data), mimetype='text/plain')
 
 if __name__ == '__main__':
     app.env = "development"
