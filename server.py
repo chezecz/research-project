@@ -2,11 +2,14 @@
 # export GOOGLE_APPLICATION_CREDENTIALS=/Users/cheze/python-XXXXXXXXXXXX.json
 
 import io
+import json
 from flask import request
 from google.cloud import speech
 from flask import Flask
 from flask import Response
 from flask import copy_current_request_context
+
+import time
 
 delimeter = '=' * 20
 
@@ -27,8 +30,8 @@ def get_transcription(content):
     for result in results:
         for data in result.results:
             for parts in data.alternatives:
+                time.sleep(2)
                 yield f"{delimeter}\n {parts.transcript}\n"
-
 
 app = Flask(__name__)
 
