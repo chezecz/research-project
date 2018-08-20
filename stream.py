@@ -13,9 +13,12 @@ def record_audio():
 		input = True,
 		frames_per_buffer = Audio.chunk)
 
+	frames = []
+
 	print("Recording...")
 	for i in range (0, int(Audio.rate / Audio.chunk * Audio.record_seconds)):
 		audio_content = stream.read(Audio.chunk)
+		frames.append(audio_content)
 
 	print('Stop recording')
 	stream.stop_stream()
@@ -23,9 +26,7 @@ def record_audio():
 
 	p.terminate()
 
-	return audio_content
+	return b''.join(frames)
 
-# for part in requests.post('http://127.0.0.1:5000/request/', data=zlib.compress(record_audio()), stream=True):
-# 	print (f"{part.decode('utf-8')}\n")
-
-print(requests.post('http://127.0.0.1:5000/request/', data=zlib.compress(record_audio()), stream=True).text)
+for part in requests.post('http://127.0.0.1:5000/request/', data=zlib.compress(record_audio()), stream=True):
+	print (f"{part.decode('utf-8')}\n")
