@@ -1,14 +1,13 @@
 # Google API Key
 # export GOOGLE_APPLICATION_CREDENTIALS=/Users/cheze/python-XXXXXXXXXXXX.json
 
-import io
-import json
 import zlib
 from flask import request
 from google.cloud import speech
 from flask import Flask
 from flask import Response
-from flask import copy_current_request_context
+
+from config import Config
 
 import time
 
@@ -17,9 +16,9 @@ delimeter = '=' * 20
 def get_transcription(content):
     client = speech.SpeechClient()
     config = speech.types.RecognitionConfig(
-        encoding='LINEAR16',
-        language_code='en-US',
-        sample_rate_hertz=44100,
+        encoding=Config.encoding,
+        language_code=Config.language,
+        sample_rate_hertz=Config.rate
     )
 
     requests = [speech.types.StreamingRecognizeRequest(audio_content=content)]
@@ -42,7 +41,7 @@ def hello():
 
 @app.route("/request/", methods = ['POST'])
 def get_request():
-    return Response(get_transcription(zlib.decompress(request.data)), mimetype='text/plain')
+    return Response(get_transcription(zlib.decompress(request.data)))
 
 if __name__ == '__main__':
     app.env = "development"
