@@ -25,5 +25,7 @@ def record_audio():
 
 	return audio_content
 
-for part in requests.post('http://127.0.0.1:5000/request/', data=zlib.compress(record_audio()), stream=True):
-	print (f"{part.decode('utf-8')}\n")
+# for part in requests.post('http://127.0.0.1:5000/request/', data=zlib.compress(record_audio()), stream=True):
+# 	print (f"{part.decode('utf-8')}\n")
+
+print(requests.post('http://127.0.0.1:5000/request/', data=zlib.compress(record_audio()), stream=True).text)
