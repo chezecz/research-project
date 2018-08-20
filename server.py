@@ -3,6 +3,7 @@
 
 import io
 import json
+import zlib
 from flask import request
 from google.cloud import speech
 from flask import Flask
@@ -30,7 +31,7 @@ def get_transcription(content):
     for result in results:
         for data in result.results:
             for parts in data.alternatives:
-                time.sleep(2)
+                # time.sleep(2)
                 yield f"{delimeter}\n {parts.transcript}\n"
 
 app = Flask(__name__)
@@ -41,7 +42,7 @@ def hello():
 
 @app.route("/request/", methods = ['POST'])
 def get_request():
-    return Response(get_transcription(request.data), mimetype='text/plain')
+    return Response(get_transcription(zlib.decompress(request.data)), mimetype='text/plain')
 
 if __name__ == '__main__':
     app.env = "development"
