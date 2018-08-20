@@ -22,6 +22,7 @@ def record_audio():
         frames.append(audio_content)
 
     print('Stop recording')
+    audio_content = stream.read(Audio.chunk)
     stream.stop_stream()
     stream.close()
     p.terminate()
