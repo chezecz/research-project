@@ -5,6 +5,13 @@ import sys
 import time
 import zlib
 
+# Things to read about:
+# Run length encoding
+# Hoffman encoding
+# Gzip compression (i.e., how it works, internally)
+# JPEG compression (how it works internally)
+# MP3 compression (how it works internally)
+
 start_time = time.time()
 
 file_name = os.path.join(

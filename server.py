@@ -9,8 +9,6 @@ from flask import Response
 
 from config import Config
 
-import time
-
 delimeter = '=' * 20
 
 def get_transcription(content):
@@ -30,7 +28,6 @@ def get_transcription(content):
     for result in results:
         for data in result.results:
             for parts in data.alternatives:
-                # time.sleep(2)
                 yield f"{delimeter}\n {parts.transcript}\n"
 
 app = Flask(__name__)
