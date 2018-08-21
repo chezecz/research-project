@@ -1,6 +1,14 @@
 # Research Project
 __Using cloud speech recognition in low bandwidth environments__
 
+### Pre-requisite
+
+__portaudio__ package for using ```stream.py```
+
+Install for macOS using Homebrew
+
+```brew install portaudio```
+
 ### Launch Project
 1. Clone project
 
