@@ -39,6 +39,10 @@ __(Optional)__ Google Cloud API key
 
 ```export GOOGLE_APPLICATION_CREDENTIALS=$PATH_TO_FILE/api_key.json```
 
-7. Run Client application
+7a. Run Client application
 
 ``` python3 client.py [filename]```
+
+7b. Run Stream Application for recording microphone
+
+```python3 stream.py```
