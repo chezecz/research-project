@@ -40,6 +40,7 @@ __(Optional)__ Google Cloud API key
 ```export GOOGLE_APPLICATION_CREDENTIALS=$PATH_TO_FILE/api_key.json```
 
 7. Run Application
+
     a. Client application
 
     ``` python3 client.py [filename] ```
