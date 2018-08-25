@@ -1,6 +1,14 @@
 # Research Project
 __Using cloud speech recognition in low bandwidth environments__
 
+### Pre-requisite
+
+__portaudio__ package for using ```stream.py```
+
+Install for macOS using Homebrew
+
+```brew install portaudio```
+
 ### Launch Project
 1. Clone project
 
@@ -31,6 +39,12 @@ __(Optional)__ Google Cloud API key
 
 ```export GOOGLE_APPLICATION_CREDENTIALS=$PATH_TO_FILE/api_key.json```
 
-7. Run Client application
+7. Run Application
 
-``` python3 client.py [filename]```
+    a. Client application
+
+    ``` python3 client.py [filename] ```
+
+    b. Run Stream Application for recording microphone
+
+    ```python3 stream.py```
