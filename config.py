@@ -7,7 +7,7 @@ class Config:
 
 class Audio:
 	a_format = pyaudio.paInt16
-	chunk = 1024
+	chunk = 4096
 	width = 2
 	channels = 1
 	rate = 44100

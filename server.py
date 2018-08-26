@@ -12,6 +12,7 @@ from config import Config
 delimeter = '=' * 20
 
 def get_transcription(content):
+
     client = speech.SpeechClient()
     config = speech.types.RecognitionConfig(
         encoding=Config.encoding,
@@ -24,7 +25,7 @@ def get_transcription(content):
     config = speech.types.StreamingRecognitionConfig(config=config, interim_results = True)
 
     results = client.streaming_recognize(config, requests)
-    
+
     for result in results:
         for data in result.results:
             for parts in data.alternatives:
