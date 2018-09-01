@@ -35,12 +35,13 @@ def get_transcription():
     requests = (speech.types.StreamingRecognizeRequest(audio_content=chunk) for chunk in generator)
     results = client.streaming_recognize(config, requests)
 
-    print('here')
     for result in results:
-        print(result)
+        # print(result)
         for data in result.results:
+            # print(data)
             for parts in data.alternatives:
-                yield f"{delimeter}\n {parts.transcript}\n"
+                print(parts.transcript)
+        #         yield f"{delimeter}\n {parts.transcript}\n"
 
 @app.before_first_request
 def activate_job():
