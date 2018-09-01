@@ -9,6 +9,7 @@ from flask import request
 from google.cloud import speech
 from flask import Flask
 from flask import Response
+from flask import stream_with_context
 
 from config import Config
 
@@ -16,10 +17,17 @@ delimeter = '=' * 20
 
 buffer = queue.Queue()
 
+buffer_response = queue.Queue()
+
 def chunks():
-    data = []
     while True:
         yield buffer.get()
+
+@stream_with_context
+def chunks_response():
+    while buffer.full():
+        print(f"rofl:{buffer_response.get()}")
+        yield buffer_response.get()
 
 app = Flask(__name__)
 
@@ -36,12 +44,11 @@ def get_transcription():
     results = client.streaming_recognize(config, requests)
 
     for result in results:
-        # print(result)
         for data in result.results:
-            # print(data)
             for parts in data.alternatives:
-                print(parts.transcript)
-        #         yield f"{delimeter}\n {parts.transcript}\n"
+                print(parts)
+                buffer_response.put(parts.transcript)
+                # yield f"{delimeter}\n {parts.transcript}\n"
 
 @app.before_first_request
 def activate_job():
@@ -56,7 +63,7 @@ def hello():
 @app.route("/request/", methods = ['POST'])
 def get_request():
     buffer.put(zlib.decompress(request.data))
-    return Response('ok')
+    return Response(chunks_response())
 
 if __name__ == '__main__':
     app.env = "development"
