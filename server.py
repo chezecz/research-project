@@ -23,14 +23,12 @@ def chunks():
         yield buffer.get()
 
 def chunks_response():
-    while buffer.task_done():
-        print(f"rofl:{buffer_response.get()}")
+    while True:
         yield buffer_response.get()
 
 app = Flask(__name__)
 
 def get_transcription():
-    global stop_flag
     generator = chunks()
     client = speech.SpeechClient()
     config = speech.types.RecognitionConfig(
@@ -45,6 +43,7 @@ def get_transcription():
     for result in results:
         for data in result.results:
             for parts in data.alternatives:
+                print(parts)
                 buffer_response.put(parts.transcript)
                 yield f"{delimeter}\n {parts.transcript}\n"
 
@@ -73,7 +72,7 @@ def hello():
 @app.route("/request/", methods = ['POST'])
 def get_request():
     buffer.put(zlib.decompress(request.data))
-    return Response(return_response())
+    return Response('ok')
 
 if __name__ == '__main__':
     app.env = "development"
