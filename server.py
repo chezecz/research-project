@@ -45,7 +45,7 @@ def get_transcription():
             for parts in data.alternatives:
                 print(parts)
                 buffer_response.put(parts.transcript)
-                yield f"{delimeter}\n {parts.transcript}\n"
+                # yield f"{delimeter}\n {parts.transcript}\n"
 
 
 
@@ -72,7 +72,11 @@ def hello():
 @app.route("/request/", methods = ['POST'])
 def get_request():
     buffer.put(zlib.decompress(request.data))
-    return Response('ok')
+    if buffer_response.empty():
+        return "none"
+    else:
+        return Response(buffer_response.get())
+    # return Response('ok')
 
 if __name__ == '__main__':
     app.env = "development"
