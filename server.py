@@ -19,16 +19,19 @@ buffer = queue.Queue()
 buffer_response = queue.Queue()
 
 def chunks():
+    # while there is no silence:
+    # while we have regular buffer samples:
     while True:
-        yield buffer.get()
-
-def chunks_response():
-    while True:
-        yield buffer_response.get()
+        try:
+            yield buffer.get(timeout = 10)
+        except queue.Empty:
+            print('break')
+            break
 
 app = Flask(__name__)
 
 def get_transcription():
+    print("check")
     generator = chunks()
     client = speech.SpeechClient()
     config = speech.types.RecognitionConfig(
@@ -46,7 +49,6 @@ def get_transcription():
                 print(parts)
                 buffer_response.put(parts.transcript)
                 # yield f"{delimeter}\n {parts.transcript}\n"
-
 
 
 def return_response():
@@ -73,10 +75,9 @@ def hello():
 def get_request():
     buffer.put(zlib.decompress(request.data))
     if buffer_response.empty():
-        return "none"
+        return ""
     else:
         return Response(buffer_response.get())
-    # return Response('ok')
 
 if __name__ == '__main__':
     app.env = "development"
