@@ -38,7 +38,6 @@ def record_audio():
 def get_transcription(data):
     for part in requests.post('http://127.0.0.1:5000/request/', data=zlib.compress(data), stream=True):
         print (f"{part.decode('utf-8')}")
-        # print(part)
 
 if __name__ == '__main__':
     record_audio()
