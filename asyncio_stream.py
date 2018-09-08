@@ -5,10 +5,37 @@ import time
 import pydub
 import io
 import subprocess
+import asyncio
 
 from pydub import AudioSegment
 
 from config import Audio
+from config import Server
+
+class EchoClientProtocol:
+    def __init__(self, message, loop):
+        self.message = message
+        self.loop = loop
+        self.transport = None
+
+    def connection_made(self, transport):
+        self.transport = transport
+        print('Send:', self.message)
+        self.transport.sendto(self.message.encode())
+
+    def datagram_received(self, data, addr):
+        print("Received:", data.decode())
+
+        print("Close the socket")
+        self.transport.close()
+
+    def error_received(self, exc):
+        print('Error received:', exc)
+
+    def connection_lost(self, exc):
+        print("Socket closed, stop the event loop")
+        loop = asyncio.get_event_loop()
+        loop.stop()
 
 def callback(input_data, frame_count, time_info, status):
     get_transcription(input_data)
@@ -36,8 +63,16 @@ def record_audio():
     return None
 
 def get_transcription(data):
-    for part in requests.post('http://127.0.0.1:5000/request/', data=zlib.compress(data), stream=True):
-        print (f"{part.decode('utf-8')}")
+    loop = asyncio.get_event_loop()
+    message = zlib.compress(data)
+    connect = loop.create_datagram_endpoint(
+        lambda: EchoClientProtocol(message, loop),
+        remote_addr=(Server.host, Server.port))
+    transport, protocol = loop.run_until_complete(connect)
+    loop.run_forever()
+    transport.close()
+    loop.close()
+
 
 if __name__ == '__main__':
     record_audio()

@@ -1,5 +1,12 @@
 import asyncio
 import zlib
+import queue
+import threading
+
+from google.cloud import speech
+
+from config import Config
+from config import Server
 
 buffer = queue.Queue()
 buffer_response = queue.Queue()
@@ -48,7 +55,7 @@ class EchoServerProtocol:
 def run_server(host, port):
     loop = asyncio.get_event_loop()
     listen = loop.create_datagram_endpoint(
-        EchoServerProtocol, local_addr=('127.0.0.1', 9999))
+        EchoServerProtocol, local_addr=(Server.host, Server.port))
     transport, protocol = loop.run_until_complete(listen)
 
     try:
