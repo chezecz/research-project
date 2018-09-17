@@ -19,7 +19,7 @@ uncompressed_audio = audioop.adpcm2lin(compressed_audio[0], 1, None)
 
 print(len(audio_content))
 print(len(compressed_audio[0]))
-print(len(compressed_audio_alaw))
+print(len(zlib_compressed_audio))
 
 compress_ratio_audio = (float(len(audio_content)) - float(len(compressed_audio[0]))) / float(len(audio_content)) 
 compress_ratio_zlib = (float(len(audio_content)) - float(len(zlib_compressed))) / float(len(audio_content)) 

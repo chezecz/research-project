@@ -2,6 +2,7 @@ import asyncio
 import zlib
 import queue
 import threading
+import audioop
 
 from google.cloud import speech
 
@@ -46,9 +47,10 @@ class EchoServerProtocol:
         self.transport = transport
 
     def datagram_received(self, data, addr):
+        # buffer.put(zlib.decompress(audioop.adpcm2lin(zlib.decompress(data), 1, None)[0]), block=False)
         buffer.put(zlib.decompress(data), block=False)
         if buffer_response.empty():
-            self.transport.sendto("", addr)
+            self.transport.sendto(b'', addr)
         else:
             self.transport.sendto(buffer_response.get(), addr)
 

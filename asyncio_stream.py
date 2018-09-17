@@ -1,11 +1,9 @@
 import pyaudio
-import requests
 import zlib
-import time
-import pydub
 import io
-import subprocess
 import asyncio
+import audioop
+import time
 
 from pydub import AudioSegment
 
@@ -21,10 +19,10 @@ class EchoClientProtocol:
     def connection_made(self, transport):
         self.transport = transport
         print('Send:', self.message)
-        self.transport.sendto(self.message.encode())
+        self.transport.sendto(self.message)
 
     def datagram_received(self, data, addr):
-        print("Received:", data.decode())
+        print("Received:", data)
 
         print("Close the socket")
         self.transport.close()
@@ -37,7 +35,14 @@ class EchoClientProtocol:
         loop = asyncio.get_event_loop()
         loop.stop()
 
+def connection():
+    loop = asyncio.get_event_loop()
+    connect = loop.create_datagram_endpoint(
+        )
+
 def callback(input_data, frame_count, time_info, status):
+    # message = audioop.lin2adpcm(input_data, 1, None)
+    # get_transcription(message[0])
     get_transcription(input_data)
     return (input_data, pyaudio.paContinue)
 
@@ -63,8 +68,10 @@ def record_audio():
     return None
 
 def get_transcription(data):
-    loop = asyncio.get_event_loop()
-    message = zlib.compress(data)
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    # message = zlib.compress(data)
+    message = data
     connect = loop.create_datagram_endpoint(
         lambda: EchoClientProtocol(message, loop),
         remote_addr=(Server.host, Server.port))
@@ -72,7 +79,6 @@ def get_transcription(data):
     loop.run_forever()
     transport.close()
     loop.close()
-
 
 if __name__ == '__main__':
     record_audio()
