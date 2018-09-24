@@ -4,8 +4,9 @@ import io
 import asyncio
 import audioop
 import time
+import queue
 
-from pydub import AudioSegment
+buffer = queue.Queue()
 
 from config import Audio
 from config import Server
@@ -35,15 +36,12 @@ class EchoClientProtocol:
         loop = asyncio.get_event_loop()
         loop.stop()
 
-def connection():
-    loop = asyncio.get_event_loop()
-    connect = loop.create_datagram_endpoint(
-        )
-
 def callback(input_data, frame_count, time_info, status):
-    # message = audioop.lin2adpcm(input_data, 1, None)
+    message = audioop.lin2adpcm(input_data, 1, None)
     # get_transcription(message[0])
-    get_transcription(input_data)
+    # get_transcription(input_data)
+    buffer.put(input_data)
+    get_transcription(buffer.get())
     return (input_data, pyaudio.paContinue)
 
 def record_audio():
@@ -70,8 +68,8 @@ def record_audio():
 def get_transcription(data):
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
-    # message = zlib.compress(data)
-    message = data
+    message = zlib.compress(data)
+    # message = data
     connect = loop.create_datagram_endpoint(
         lambda: EchoClientProtocol(message, loop),
         remote_addr=(Server.host, Server.port))

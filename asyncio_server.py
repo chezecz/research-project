@@ -31,8 +31,9 @@ def get_transcription():
         config = speech.types.StreamingRecognitionConfig(config=config, interim_results = True)
         requests = (speech.types.StreamingRecognizeRequest(audio_content=chunk) for chunk in generator)
         results = client.streaming_recognize(config, requests)
-
+        print(results)
         for result in results:
+            print(result)
             for data in result.results:
                 for parts in data.alternatives:
                     buffer_response.put(parts.transcript)
