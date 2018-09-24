@@ -31,7 +31,7 @@ def get_transcription():
         config = speech.types.StreamingRecognitionConfig(config=config, interim_results = True)
         requests = (speech.types.StreamingRecognizeRequest(audio_content=chunk) for chunk in generator)
         results = client.streaming_recognize(config, requests)
-        print(results)
+
         for result in results:
             print(result)
             for data in result.results:
@@ -48,12 +48,8 @@ class EchoServerProtocol:
         self.transport = transport
 
     def datagram_received(self, data, addr):
-        # buffer.put(zlib.decompress(audioop.adpcm2lin(zlib.decompress(data), 1, None)[0]), block=False)
-        buffer.put(zlib.decompress(data), block=False)
-        if buffer_response.empty():
-            self.transport.sendto(b'', addr)
-        else:
-            self.transport.sendto(buffer_response.get(), addr)
+        message = audioop.adpcm2lin(zlib.decompress(data), 1, None)
+        buffer.put(zlib.decompress(data))
 
 def run_server(host, port):
     loop = asyncio.get_event_loop()

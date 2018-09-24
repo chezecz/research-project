@@ -1,47 +1,22 @@
 import pyaudio
 import zlib
 import io
-import asyncio
 import audioop
 import time
-import queue
-
-buffer = queue.Queue()
+import asyncio
+import socket
 
 from config import Audio
 from config import Server
 
-class EchoClientProtocol:
-    def __init__(self, message, loop):
-        self.message = message
-        self.loop = loop
-        self.transport = None
+i = 0
 
-    def connection_made(self, transport):
-        self.transport = transport
-        print('Send:', self.message)
-        self.transport.sendto(self.message)
-
-    def datagram_received(self, data, addr):
-        print("Received:", data)
-
-        print("Close the socket")
-        self.transport.close()
-
-    def error_received(self, exc):
-        print('Error received:', exc)
-
-    def connection_lost(self, exc):
-        print("Socket closed, stop the event loop")
-        loop = asyncio.get_event_loop()
-        loop.stop()
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 def callback(input_data, frame_count, time_info, status):
     message = audioop.lin2adpcm(input_data, 1, None)
     # get_transcription(message[0])
-    # get_transcription(input_data)
-    buffer.put(input_data)
-    get_transcription(buffer.get())
+    get_transcription(input_data)
     return (input_data, pyaudio.paContinue)
 
 def record_audio():
@@ -63,20 +38,11 @@ def record_audio():
     stream.close()
     p.terminate()
 
-    return None
-
 def get_transcription(data):
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    message = zlib.compress(data)
-    # message = data
-    connect = loop.create_datagram_endpoint(
-        lambda: EchoClientProtocol(message, loop),
-        remote_addr=(Server.host, Server.port))
-    transport, protocol = loop.run_until_complete(connect)
-    loop.run_forever()
-    transport.close()
-    loop.close()
+    sock.sendto(zlib.compress(data), (Server.host, Server.port))
 
 if __name__ == '__main__':
     record_audio()
+    while True:
+        data, addr = sock.recvfrom(1024)
+        print (data)
