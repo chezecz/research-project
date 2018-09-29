@@ -43,7 +43,7 @@ def activate_job():
     background.daemon = True
     background.start()
 
-class EchoServerProtocol:
+class EchoServerProtocol(asyncio.DatagramProtocol):
     def connection_made(self, transport):
         self.transport = transport
 
@@ -55,7 +55,7 @@ class EchoServerProtocol:
         else:
             self.transport.sendto(buffer_response.get().encode(), addr)
 
-def run_server(host, port):
+def run_server():
     loop = asyncio.get_event_loop()
     listen = loop.create_datagram_endpoint(
         EchoServerProtocol, local_addr=(Server.host, Server.port))
@@ -71,4 +71,4 @@ def run_server(host, port):
 
 if __name__ == '__main__':
     activate_job()
-    run_server('127.0.0.1', 8888)
+    run_server()

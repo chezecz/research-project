@@ -43,7 +43,7 @@ class ServerProtocol(asyncio.DatagramProtocol):
         self.transport = transport
 
     def datagram_received(self, data, addr):
-        buffer.put_nowait(data)
+        buffer.put_nowait(audioop.adpcm2lin(zlib.decompress(data), 2, None))
         if response.empty():
             self.transport.sendto(b'', addr)
         else:
@@ -52,7 +52,6 @@ class ServerProtocol(asyncio.DatagramProtocol):
 
 async def run_server():
     loop = asyncio.get_running_loop()
-    t = loop.create_task(get_transcription())
     transport, protocol = await loop.create_datagram_endpoint(
        lambda: ServerProtocol(), 
        local_addr=(Server.host, Server.port))
