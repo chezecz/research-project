@@ -12,10 +12,10 @@ file_name = os.path.join(
 with io.open(file_name, 'rb') as audio:
     audio_content = audio.read()
 
-compressed_audio = audioop.lin2adpcm(audio_content, 1, None)
+compressed_audio = audioop.lin2adpcm(audio_content, 2, None)
 zlib_compressed = zlib.compress(audio_content)
 zlib_compressed_audio = zlib.compress(compressed_audio[0])
-uncompressed_audio = audioop.adpcm2lin(compressed_audio[0], 1, None)
+uncompressed_audio = audioop.adpcm2lin(compressed_audio[0], 2, None)
 
 print(len(audio_content))
 print(len(compressed_audio[0]))
