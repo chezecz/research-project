@@ -9,14 +9,11 @@ import socket
 from config import Audio
 from config import Server
 
-i = 0
-
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 def callback(input_data, frame_count, time_info, status):
-    message = audioop.lin2adpcm(input_data, 1, None)
-    # get_transcription(message[0])
-    get_transcription(input_data)
+    message = audioop.lin2adpcm(input_data, 2, None)
+    get_transcription(message[0])
     return (input_data, pyaudio.paContinue)
 
 def record_audio():

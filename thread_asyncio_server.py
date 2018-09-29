@@ -48,8 +48,8 @@ class EchoServerProtocol:
         self.transport = transport
 
     def datagram_received(self, data, addr):
-        message = audioop.adpcm2lin(zlib.decompress(data), 1, None)
-        buffer.put(zlib.decompress(data))
+        message = audioop.adpcm2lin(zlib.decompress(data), 2, None)
+        buffer.put(message[0])
         if buffer_response.empty():
             self.transport.sendto(b'', addr)
         else:

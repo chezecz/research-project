@@ -47,7 +47,7 @@ class ServerProtocol(asyncio.DatagramProtocol):
         if response.empty():
             self.transport.sendto(b'', addr)
         else:
-            self.transport.sendto(response.get(), addr)
+            self.transport.sendto(response.get().encode(), addr)
 
 
 async def run_server():
