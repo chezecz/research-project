@@ -12,3 +12,7 @@ class Audio:
 	channels = 1
 	rate = 44100
 	record_seconds = 2
+
+class Server:
+	host = "127.0.0.1"
+	port = 8888
