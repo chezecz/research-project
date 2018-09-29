@@ -1,7 +1,8 @@
+# Google API Key
+# export GOOGLE_APPLICATION_CREDENTIALS=/Users/cheze/python-XXXXXXXXXXXX.json
+
 import asyncio
 import zlib
-import queue
-import threading
 import audioop
 
 from google.cloud import speech
@@ -9,62 +10,58 @@ from google.cloud import speech
 from config import Config
 from config import Server
 
-buffer = queue.Queue()
-buffer_response = queue.Queue()
+buffer = asyncio.Queue()
+response = asyncio.Queue()
 
 def chunks():
     while True:
-        try:
-            yield buffer.get(timeout = 1)
-        except queue.Empty:
-            break
+        if buffer.empty():
+            pass
+        else:
+            yield buffer.get()
 
-def get_transcription():
-    while True:
-        generator = chunks()
-        client = speech.SpeechClient()
-        config = speech.types.RecognitionConfig(
-            encoding=Config.encoding,
-            language_code=Config.language,
-            sample_rate_hertz=Config.rate
-        )
-        config = speech.types.StreamingRecognitionConfig(config=config, interim_results = True)
-        requests = (speech.types.StreamingRecognizeRequest(audio_content=chunk) for chunk in generator)
-        results = client.streaming_recognize(config, requests)
+async def get_transcription():
+    generator = chunks()
+    client = speech.SpeechClient()
+    config = speech.types.RecognitionConfig(
+        encoding=Config.encoding,
+        language_code=Config.language,
+        sample_rate_hertz=Config.rate
+    )
+    config = speech.types.StreamingRecognitionConfig(config=config, interim_results = True)
+    requests = (speech.types.StreamingRecognizeRequest(audio_content=chunk) for chunk in generator)
+    results = client.streaming_recognize(config, requests)
 
-        for result in results:
-            print(result)
-            for data in result.results:
-                for parts in data.alternatives:
-                    buffer_response.put(parts.transcript)
+    for result in results:
+        print(result)
+        for data in result.results:
+            for parts in data.alternatives:
+                response.put(parts.transcript)
 
-def activate_job():
-    background = threading.Thread(target=get_transcription, args=())
-    background.daemon = True
-    background.start()
-
-class EchoServerProtocol:
+class ServerProtocol(asyncio.DatagramProtocol):
     def connection_made(self, transport):
         self.transport = transport
 
     def datagram_received(self, data, addr):
-        message = audioop.adpcm2lin(zlib.decompress(data), 1, None)
-        buffer.put(zlib.decompress(data))
+        buffer.put_nowait(data)
+        if response.empty():
+            self.transport.sendto(b'', addr)
+        else:
+            self.transport.sendto(response.get(), addr)
 
-def run_server(host, port):
-    loop = asyncio.get_event_loop()
-    listen = loop.create_datagram_endpoint(
-        EchoServerProtocol, local_addr=(Server.host, Server.port))
-    transport, protocol = loop.run_until_complete(listen)
+
+async def run_server():
+    loop = asyncio.get_running_loop()
+    t = loop.create_task(get_transcription())
+    transport, protocol = await loop.create_datagram_endpoint(
+       lambda: ServerProtocol(), 
+       local_addr=(Server.host, Server.port))
 
     try:
-        loop.run_forever()
+        await asyncio.sleep(3600)
     except KeyboardInterrupt:
         pass
+    finally:
+        transport.close()
 
-    transport.close()
-    loop.close()
-
-if __name__ == '__main__':
-    activate_job()
-    run_server('127.0.0.1', 8888)
+asyncio.run(run_server())

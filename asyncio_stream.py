@@ -33,6 +33,9 @@ def record_audio():
 
     while stream.is_active():
         time.sleep(0.1)
+        data, addr = sock.recvfrom(1024)
+        if data:
+            print (data.decode())
 
     stream.stop_stream()
     stream.close()
@@ -43,6 +46,3 @@ def get_transcription(data):
 
 if __name__ == '__main__':
     record_audio()
-    while True:
-        data, addr = sock.recvfrom(1024)
-        print (data)
