@@ -13,7 +13,12 @@ class VoiceTranscription():
     def __init__(self):
         self.buffer = queue.Queue()
         self.buffer_response = queue.Queue()
+        self._clients = set()
         self.activate_job()
+
+    async def new_client(self):
+        client = EchoServerProtocol()
+        self._client.add(client)
 
     def put_buffer(self, data):
         self.buffer.put(data)
@@ -72,7 +77,7 @@ def run_server():
     loop = asyncio.get_event_loop()
     listen = loop.create_datagram_endpoint(
         EchoServerProtocol, local_addr=(Server.host, Server.port))
-    transport, protocol = loop.run_until_complete(listen)
+    transport, protocol = loop.run_until_complete(app.new_client, listen)
 
     try:
         loop.run_forever()
