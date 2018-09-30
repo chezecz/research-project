@@ -16,8 +16,9 @@ def activate_job():
 
 class EchoServerProtocol(asyncio.DatagramProtocol):
 
-    buffer = queue.Queue()
-    buffer_response = queue.Queue()
+    def __init__(self):
+        self.buffer = queue.Queue()
+        self.buffer_response = queue.Queue()
 
     def connection_made(self, transport):
         self.transport = transport
