@@ -5,12 +5,16 @@ import threading
 import audioop
 
 from google.cloud import speech
+from opuslib import Decoder
 
 from config import Config
 from config import Server
+from config import Opus
 
 buffer = queue.Queue()
 buffer_response = queue.Queue()
+
+dec = Decoder(Opus.rate, Opus.channels)
 
 def chunks():
     while True:
@@ -26,7 +30,7 @@ def get_transcription():
         config = speech.types.RecognitionConfig(
             encoding=Config.encoding,
             language_code=Config.language,
-            sample_rate_hertz=Config.rate
+            sample_rate_hertz=Opus.rate
         )
         config = speech.types.StreamingRecognitionConfig(config=config, interim_results = True)
         requests = (speech.types.StreamingRecognizeRequest(audio_content=chunk) for chunk in generator)
@@ -48,8 +52,8 @@ class EchoServerProtocol(asyncio.DatagramProtocol):
         self.transport = transport
 
     def datagram_received(self, data, addr):
-        message = audioop.adpcm2lin(zlib.decompress(data), 2, None)
-        buffer.put(message[0])
+        message = dec.decode(zlib.decompress(data), Opus.chunk)
+        buffer.put(message)
         if buffer_response.empty():
             self.transport.sendto(b'', addr)
         else:
