@@ -2,6 +2,7 @@ import pyaudio
 import audioop
 import time
 import socket
+import zlib
 
 from opuslib import Encoder
 
@@ -12,7 +13,7 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 def callback(input_data, frame_count, time_info, status):
     audio_encoded = enc.encode(input_data, Opus.chunk)
-    get_transcription(audio_encoded)
+    get_transcription(zlib.compress(audio_encoded))
     return (input_data, pyaudio.paContinue)
 
 def record_audio():

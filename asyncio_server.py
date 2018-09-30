@@ -29,7 +29,7 @@ async def get_transcription():
         sample_rate_hertz=Config.rate
     )
     config = speech.types.StreamingRecognitionConfig(config=config, interim_results = True)
-    requests = (speech.types.StreamingRecognizeRequest(audio_content=chunk) for chunk in generator)
+    requests = await (speech.types.StreamingRecognizeRequest(audio_content=chunk) for chunk in generator)
     results = client.streaming_recognize(config, requests)
 
     for result in results:

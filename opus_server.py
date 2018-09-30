@@ -52,7 +52,7 @@ class EchoServerProtocol(asyncio.DatagramProtocol):
         self.transport = transport
 
     def datagram_received(self, data, addr):
-        message = dec.decode(data, Opus.chunk)
+        message = dec.decode(zlib.decompress(data), Opus.chunk)
         buffer.put(message)
         if buffer_response.empty():
             self.transport.sendto(b'', addr)
