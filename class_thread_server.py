@@ -9,28 +9,20 @@ from google.cloud import speech
 from config import Config
 from config import Server
 
-def activate_job():
-    background = threading.Thread(target=get_transcription, args=())
-    background.daemon = True
-    background.start()
-
-class EchoServerProtocol(asyncio.DatagramProtocol):
-
+class VoiceTranscription():
     def __init__(self):
         self.buffer = queue.Queue()
         self.buffer_response = queue.Queue()
-
-    def connection_made(self, transport):
-        self.transport = transport
         self.activate_job()
 
-    def datagram_received(self, data, addr):
-        message = audioop.adpcm2lin(zlib.decompress(data), 2, None)
-        self.buffer.put(message[0])
+    def put_buffer(self, data):
+        self.buffer.put(data)
+
+    def get_buffer(self):
         if self.buffer_response.empty():
-            self.transport.sendto(b'', addr)
+            return b''
         else:
-            self.transport.sendto(self.buffer_response.get().encode(), addr)
+            self.buffer_response.get().encode()
 
     def chunks(self):
         while True:
@@ -62,6 +54,19 @@ class EchoServerProtocol(asyncio.DatagramProtocol):
         background = threading.Thread(target=self.get_transcription, args=())
         background.daemon = True
         background.start()
+
+
+class EchoServerProtocol(asyncio.DatagramProtocol):
+
+    def connection_made(self, transport):
+        self.transport = transport
+
+    def datagram_received(self, data, addr):
+        message = audioop.adpcm2lin(zlib.decompress(data), 2, None)
+        buffer = VoiceTranscription()
+        buffer.put_buffer(message[0])
+        self.transport.sendto(buffer.get_buffer(), addr)
+
 
 def run_server():
     loop = asyncio.get_event_loop()
