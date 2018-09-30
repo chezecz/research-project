@@ -4,3 +4,11 @@
 .txt
 apikey.py
 /__pycache__
+asyncio_arch/__pycache__
+compression_test/__pycache__
+config/__pycache__
+flask/__pycache__
+google_examples/__pycache__
+opus/__pycache__
+resources/__pycache__
+versions/__pycache__
