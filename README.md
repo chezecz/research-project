@@ -10,6 +10,10 @@ Install for macOS using Homebrew
 ```brew install portaudio```
 
 ### Launch Project
+
+```python3 -m folder_name.filename```
+
+### Launch Project
 1. Clone project
 
 ```git clone https://github.com/chezecz/research-project.git```
