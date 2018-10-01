@@ -1,7 +1,7 @@
 import pyaudio
 import audioop
 import time
-from config import Audio
+from config.config import Audio
 
 def callback(input_data, frame_count, time_info, status):
     message = audioop.lin2adpcm(input_data, 2, None)

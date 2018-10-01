@@ -4,7 +4,7 @@ import time
 
 from opuslib import Encoder, Decoder
 
-from config import Audio
+from config.config import Audio
 
 rate = 48000
 channels = 2

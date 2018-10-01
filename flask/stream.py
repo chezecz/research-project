@@ -8,7 +8,7 @@ import subprocess
 
 from pydub import AudioSegment
 
-from config import Audio
+from config.config import Audio
 
 def callback(input_data, frame_count, time_info, status):
     get_transcription(input_data)

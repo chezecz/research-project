@@ -9,14 +9,14 @@ import asyncio
 import socket
 import wave
 
-from config import Audio
-from config import Server
+from config.config import Audio
+from config.config import Server
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 file_name = os.path.join(
     os.path.dirname(__file__),
-    'resources',
+    '../resources',
     sys.argv[1])
 
 wf = wave.open(file_name, 'rb')

@@ -10,7 +10,7 @@ from flask import Flask
 from flask import Response
 from flask import stream_with_context
 
-from config import Config
+from config.config import Config
 
 delimeter = '=' * 20
 

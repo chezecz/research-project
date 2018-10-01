@@ -7,9 +7,9 @@ import audioop
 from google.cloud import speech
 from opuslib import Decoder
 
-from config import Config
-from config import Server
-from config import Opus
+from config.config import Config
+from config.config import Server
+from config.config import Opus
 
 buffer = queue.Queue()
 buffer_response = queue.Queue()

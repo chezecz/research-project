@@ -7,8 +7,8 @@ import audioop
 
 from google.cloud import speech
 
-from config import Config
-from config import Server
+from config.config import Config
+from config.config import Server
 
 buffer = asyncio.Queue()
 response = asyncio.Queue()

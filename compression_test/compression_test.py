@@ -4,21 +4,27 @@ import zlib
 import os
 import sys
 
+from opuslib import Encoder
+
+enc = Encoder(48000, 2, 'audio')
+
 file_name = os.path.join(
     os.path.dirname(__file__),
-    'resources',
+    '../resources',
     sys.argv[1])
 
 with io.open(file_name, 'rb') as audio:
     audio_content = audio.read()
 
 compressed_audio = audioop.lin2adpcm(audio_content, 2, None)
+opus_audio = enc.encode(audio_content, 960)
 zlib_compressed = zlib.compress(audio_content)
 zlib_compressed_audio = zlib.compress(compressed_audio[0])
 uncompressed_audio = audioop.adpcm2lin(compressed_audio[0], 2, None)
 
 print(len(audio_content))
 print(len(compressed_audio[0]))
+print(len(opus_audio))
 print(len(zlib_compressed_audio))
 
 compress_ratio_audio = (float(len(audio_content)) - float(len(compressed_audio[0]))) / float(len(audio_content)) 
