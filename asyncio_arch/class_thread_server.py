@@ -4,6 +4,7 @@ import queue
 import threading
 import audioop
 
+from collections import namedtuple
 from google.cloud import speech
 
 from config.config import Config
@@ -63,21 +64,34 @@ class VoiceTranscription():
 
 class EchoServerProtocol(asyncio.DatagramProtocol):
 
+    connection_dict = {}
+    socket_pair = namedtuple('Socket_pair', ['host', 'port'])
+
     def connection_made(self, transport):
         self.transport = transport
 
     def datagram_received(self, data, addr):
         message = audioop.adpcm2lin(zlib.decompress(data), 2, None)
-        buffer = VoiceTranscription()
-        buffer.put_buffer(message[0])
-        self.transport.sendto(buffer.get_buffer(), addr)
+        pair = self.socket_pair(host = addr[0], port = addr[1])
+        self.connection_dict[addr] = VoiceTranscription()
+        print(f"\n\n\n{self.connection_dict}")
+        if addr in self.connection_dict:
+            print(dir(self.connection_dict[addr]))
+            self.connection_dict[addr].put_buffer(message[0])
+            self.transport.sendto(self.connection_dict[addr].get_buffer(), addr)
+        else:
+            buffer = VoiceTranscription()
+            self.connection_dict[addr] = buffer
+            print(dir(self.connection_dict[addr]))
+            self.connection_dict[addr].put_buffer(message[0])
+            self.transport.sendto(self.connection_dict[addr].get_buffer(), addr)
 
 
 def run_server():
     loop = asyncio.get_event_loop()
     listen = loop.create_datagram_endpoint(
         EchoServerProtocol, local_addr=(Server.host, Server.port))
-    transport, protocol = loop.run_until_complete(app.new_client, listen)
+    transport, protocol = loop.run_until_complete(listen)
 
     try:
         loop.run_forever()
