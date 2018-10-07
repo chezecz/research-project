@@ -27,7 +27,7 @@ class VoiceTranscription():
         if self.buffer_response.empty():
             return b''
         else:
-            self.buffer_response.get().encode()
+            return self.buffer_response.get().encode()
 
     def chunks(self):
         while True:
@@ -75,8 +75,7 @@ class EchoServerProtocol(asyncio.DatagramProtocol):
         if addr in self.connection_dict:
             self.connection_dict[addr].put_buffer(message[0])
             resp = self.connection_dict[addr].get_buffer()
-            # print(resp)
-            # self.transport.sendto(resp, addr)
+            self.transport.sendto(resp, addr)
         else:
             self.connection_dict[addr] = VoiceTranscription()
 
