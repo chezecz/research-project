@@ -72,15 +72,13 @@ class EchoServerProtocol(asyncio.DatagramProtocol):
     def datagram_received(self, data, addr):
         message = audioop.adpcm2lin(zlib.decompress(data), 2, None)
         pair = self.socket_pair(host = addr[0], port = addr[1])
-        self.connection_dict[addr] = VoiceTranscription()
-        print(f"\n\n\n{self.connection_dict}")
         if addr in self.connection_dict:
-            print(dir(self.connection_dict[addr]))
             self.connection_dict[addr].put_buffer(message[0])
-            self.transport.sendto(self.connection_dict[addr].get_buffer(), addr)
+            resp = self.connection_dict[addr].get_buffer()
+            # print(resp)
+            # self.transport.sendto(resp, addr)
         else:
-            buffer = VoiceTranscription()
-            self.connection_dict[addr] = buffer
+            self.connection_dict[addr] = VoiceTranscription()
 
 
 def run_server():
