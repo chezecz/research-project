@@ -14,7 +14,6 @@ class VoiceTranscription():
     def __init__(self):
         self.buffer = queue.Queue()
         self.buffer_response = queue.Queue()
-        self._clients = set()
         self.activate_job()
 
     async def new_client(self):
@@ -82,9 +81,6 @@ class EchoServerProtocol(asyncio.DatagramProtocol):
         else:
             buffer = VoiceTranscription()
             self.connection_dict[addr] = buffer
-            print(dir(self.connection_dict[addr]))
-            self.connection_dict[addr].put_buffer(message[0])
-            self.transport.sendto(self.connection_dict[addr].get_buffer(), addr)
 
 
 def run_server():
