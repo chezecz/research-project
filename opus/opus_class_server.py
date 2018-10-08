@@ -6,9 +6,13 @@ import audioop
 
 from collections import namedtuple
 from google.cloud import speech
+from opuslib import Decoder
 
 from config.config import Config
 from config.config import Server
+from config.config import Opus
+
+dec = Decoder(Opus.rate, Opus.channels)
 
 class VoiceTranscription():
     def __init__(self):
@@ -70,15 +74,15 @@ class EchoServerProtocol(asyncio.DatagramProtocol):
         self.transport = transport
 
     def datagram_received(self, data, addr):
-        message = audioop.adpcm2lin(zlib.decompress(data), 2, None)
+        message = dec.decode(zlib.decompress(data), Opus.chunk)
         pair = self.socket_pair(host = addr[0], port = addr[1])
         if addr in self.connection_dict:
-            self.connection_dict[addr].put_buffer(message[0])
+            self.connection_dict[addr].put_buffer(message)
             resp = self.connection_dict[addr].get_buffer()
             self.transport.sendto(resp, addr)
         else:
             self.connection_dict[addr] = VoiceTranscription()
-            self.connection_dict[addr].put_buffer(message[0])
+            self.connection_dict[addr].put_buffer(message)
 
 
 def run_server():
