@@ -10,7 +10,7 @@ research-project/
         test_audio_compression.py
     config/
     	config.py
-    flask/
+    flask_arch/
     	client.py
     	server.py
     	stream.py
@@ -22,6 +22,7 @@ research-project/
     	opus_server.py
         opus_test.py
     resources/
+        apikey.py
     versions/
         client.py
         googleSpeechAPI.py

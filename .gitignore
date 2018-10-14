@@ -7,7 +7,7 @@ apikey.py
 asyncio_arch/__pycache__
 compression_test/__pycache__
 config/__pycache__
-flask/__pycache__
+flask_arch/__pycache__
 google_examples/__pycache__
 opus/__pycache__
 resources/__pycache__
