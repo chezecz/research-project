@@ -16,19 +16,25 @@ file_name = os.path.join(
 with io.open(file_name, 'rb') as audio:
     audio_content = audio.read()
 
-compressed_audio = audioop.lin2adpcm(audio_content, 2, None)
-opus_audio = enc.encode(audio_content, 960)
 zlib_compressed = zlib.compress(audio_content)
-zlib_compressed_audio = zlib.compress(compressed_audio[0])
-uncompressed_audio = audioop.adpcm2lin(compressed_audio[0], 2, None)
+adpcm_audio = audioop.lin2adpcm(audio_content, 2, None)
+opus_audio = enc.encode(audio_content, 960)
+zlib_compressed_adpcm = zlib.compress(adpcm_audio[0])
+zlib_compressed_opus = zlib.compress(opus_audio)
+uncompressed_audio = audio_content
 
-print(len(audio_content))
-print(len(compressed_audio[0]))
+print(len(uncompressed_audio))
+print(len(zlib_compressed))
+print(len(adpcm_audio[0]))
 print(len(opus_audio))
-print(len(zlib_compressed_audio))
+print(len(zlib_compressed_adpcm))
+print(len(zlib_compressed_opus))
 
-compress_ratio_audio = (float(len(audio_content)) - float(len(compressed_audio[0]))) / float(len(audio_content)) 
-compress_ratio_zlib = (float(len(audio_content)) - float(len(zlib_compressed))) / float(len(audio_content)) 
-compress_ratio_audio_zlib = (float(len(audio_content)) - float(len(zlib_compressed_audio))) / float(len(audio_content)) 
+compress_ratio_audio = (float(len(audio_content)) - float(len(audio_content))) / float(len(audio_content)) * 100
+compress_ratio_zlib = (float(len(audio_content)) - float(len(zlib_compressed))) / float(len(audio_content)) * 100
+compress_ratio_adpcm = (float(len(audio_content)) - float(len(adpcm_audio[0]))) / float(len(audio_content)) * 100
+compress_ratio_opus = (float(len(audio_content)) - float(len(opus_audio))) / float(len(audio_content)) * 100
+compress_ratio_adpcm_zlib = (float(len(audio_content)) - float(len(zlib_compressed_adpcm))) / float(len(audio_content)) * 100
+compress_ratio_opus_zlib = (float(len(audio_content)) - float(len(zlib_compressed_opus))) / float(len(audio_content)) * 100
 
-print(f"Only Audio: {compress_ratio_audio}\nOnly zlib: {compress_ratio_zlib}\nzlib and audio: {compress_ratio_audio_zlib}")
+print(f"Original: {compress_ratio_audio:.2f}%\nzlib: {compress_ratio_zlib:.2f}%\nadpcm: {compress_ratio_adpcm:.2f}%\nopus: {compress_ratio_opus:.2f}%\nzlib+adpcm: {compress_ratio_adpcm_zlib:.2f}%\nzlib+opus:{compress_ratio_opus_zlib:.2f}%")
